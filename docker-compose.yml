@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  sample_auth_api_redis:
+    container_name: sample_auth_redis
+    image: redis:5.0.8-alpine
+  sample_auth_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./sample_auth_api:/api
+    command: >
+      sh -c "python manage.py wait_for_online_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=sample_auth_api_db
+      - DB_NAME=sample_api_db
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DEBUG=1
+      - ALLOWED_HOSTS=0.0.0.0
+      - S3_SORAGE_BACKEND=0
+    depends_on:
+      - sample_auth_api_db
+
+  sample_auth_api_db:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_DB=sample_api_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+      timeout: 20s
+      interval: 5s
+      retries: 3
