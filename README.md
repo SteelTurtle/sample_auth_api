@@ -1,4 +1,4 @@
-## Sample Auth Api (Or: a totally unfinished Django 3 based production-ready skeleton project for an API)
+## Sample Auth Api (Or: a totally unfinished Django 3 based skeleton project for an API)
 ### ...with multi-factor authentication, which is better than nothing!
 
 This API was born as a prototype for a commercial service that ended up being done, well, in a very 
